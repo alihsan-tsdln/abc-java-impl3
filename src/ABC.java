@@ -18,6 +18,7 @@ public class ABC {
     private Random random;
     private int seed;
     private boolean randomSeed = true;
+    String func_name;
 
 
 
@@ -39,16 +40,61 @@ public class ABC {
         func_res = new double[food_number];
         prob = new double[food_number];
         trial = new int[food_number];
+        func_name = "step";
     }
 
     private double function_calculator(double[] sol) {
-        String name = "sphere";
-        if(name.equals("sphere")) {
-            double res = 0.0;
+        double res = 0.0;
+        if(func_name.equals("sphere")) {
             for (double v : sol) {
-                res = res + v * v;
+                res += v * v;
             }
             return res;
+        } else if (func_name.equals("rosenbrock")) {
+            for(int i = 0; i < sol.length - 1; i++) {
+                res += (100.0 * (sol[i + 1] - (sol[i] * sol[i])) *  (sol[i + 1] - (sol[i] * sol[i]))) + ((sol[i] - 1.0) * (sol[i] - 1.0));
+            }
+            return res;
+        } else if (func_name.equals("rastrigin")) {
+            for (double v : sol) {
+                res += (v * v) - (10 * Math.cos(2 * Math.PI * v)) + 10;
+            }
+            return  res;
+        } else if (func_name.equals("griewank")) {
+            for (double v : sol) {
+                res += (v * v);
+            }
+            res /= 4000;
+            double res2 = 1.0;
+            for (int i = 0; i < sol.length; i++) {
+                res2 *= Math.cos(sol[i] / Math.sqrt(i + 1));
+            }
+            return res - res2 + 1;
+        } else if (func_name.equals("schwefel")) {
+            for (double v : sol) {
+                res -= v * Math.sin(Math.sqrt(Math.abs(v)));
+            }
+            return res;
+        } else if (func_name.equals("ackley")) {
+            for(double v : sol) {
+                res += v * v;
+            }
+            double res2 = 0;
+            for(double v : sol) {
+                res2 += Math.cos(2 * Math.PI * v);
+            }
+            return -20 * Math.exp(-0.2 * Math.sqrt(res / sol.length)) - Math.exp(res2 / sol.length) + 20 + Math.E;
+        } else if (func_name.equals("step")) {
+            for(double v : sol) {
+                double temp =  Math.floor(v + 0.5);
+                res += temp * temp;
+            }
+            return res;
+        } else if (func_name.equals("dixon-price")) {
+            for (int i = 1; i < sol.length; i++) {
+                res += (i+1) * (2 * sol[i] * sol[i] - sol[i - 1]) * (2 * sol[i] * sol[i] - sol[i - 1]);
+            }
+            return res + (sol[0] - 1) * (sol[0] - 1);
         }
         return 9999.9999;
     }
@@ -116,7 +162,7 @@ public class ABC {
         double result_of_new = function_calculator(new_solution);
         double fitness_of_new = fitness_calculator(result_of_new);
         if(fitness_of_new >  fitness[index]) {
-            if (dimension >= 0) System.arraycopy(new_solution, 0, solution[index], 0, dimension);
+            System.arraycopy(new_solution, 0, solution[index], 0, dimension);
             fitness[index] = fitness_of_new;
             func_res[index] = result_of_new;
             trial[index] = 0;

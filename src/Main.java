@@ -22,8 +22,7 @@ public class Main {
         int RUNTIME = 30;
         ABC[] abcList = new ABC[RUNTIME];
         for(int i = 0; i < RUNTIME; i++) {
-            ABC abc = new ABC(100, 10, 1000000, 500, -100.0, 100.0);
-            //abc.setRandomSeed(42);
+            ABC abc = new ABC(100, 10, 1000000, 500, -32, 32);
             abc.initilaze();
             abc.memorize_best_source();
 
