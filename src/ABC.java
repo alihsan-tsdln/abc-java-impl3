@@ -28,7 +28,8 @@ public class ABC {
                int MAXIMUM_EVALUATION,
                int LIMIT,
                double LOWER_BOUND,
-               double UPPER_BOUND) {
+               double UPPER_BOUND,
+               String FUNCTION_NAME) {
         dimension = DIMENSION;
         max_eval = MAXIMUM_EVALUATION;
         limit = LIMIT;
@@ -40,7 +41,7 @@ public class ABC {
         func_res = new double[food_number];
         prob = new double[food_number];
         trial = new int[food_number];
-        func_name = "step";
+        func_name = FUNCTION_NAME;
     }
 
     private double function_calculator(double[] sol) {
@@ -96,7 +97,7 @@ public class ABC {
             }
             return res + (sol[0] - 1) * (sol[0] - 1);
         }
-        return 9999.9999;
+        return 99.9;
     }
 
     public void setRandomSeed(int seed) {
@@ -215,7 +216,8 @@ public class ABC {
                 maxTrial = trial[i];
             }
         }
-        if(trial[maxIndex] >= limit)
+        double h = (fitness[maxIndex] - StatisticFunctions.min(fitness)) / (StatisticFunctions.max(fitness) - StatisticFunctions.min(fitness));
+        if(trial[maxIndex] >= limit / prob[maxIndex])
             init(maxIndex);
     }
 
@@ -230,4 +232,7 @@ public class ABC {
     public int getCycle_count() {
         return cycle_count;
     }
+
 }
+
+
