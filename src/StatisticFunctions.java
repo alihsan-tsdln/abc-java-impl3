@@ -1,15 +1,15 @@
 public class StatisticFunctions {
-    public double mean(double[] fitt) {
+    public static double mean(double[] arr) {
         double res = 0.0;
-        for(double v : fitt) {
+        for(double v : arr) {
             res += v;
         }
-        return res / (double) fitt.length;
+        return res / (double) arr.length;
     }
 
-    public static double max(double[] fitt) {
+    public static double max(double[] arr) {
         double max = 0.0;
-        for(double v : fitt) {
+        for(double v : arr) {
             if(v > max) {
                 max = v;
             }
@@ -17,9 +17,9 @@ public class StatisticFunctions {
         return max;
     }
 
-    public static double min(double[] fitt) {
-        double min = fitt[0];
-        for(double v : fitt) {
+    public static double min(double[] arr) {
+        double min = arr[0];
+        for(double v : arr) {
             if(v < min) {
                 min = v;
             }
@@ -27,10 +27,10 @@ public class StatisticFunctions {
         return min;
     }
 
-    public double std(double[] fitt) {
+    public static double std(double[] arr) {
         double res = 0.0;
-        for(double v : fitt) {
-            double temp = v - mean(fitt);
+        for(double v : arr) {
+            double temp = v - mean(arr);
             res += temp * temp;
         }
         return Math.sqrt(res);

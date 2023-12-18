@@ -1,24 +1,26 @@
 import java.util.Random;
 
 public class ABC {
-    private final int dimension;
-    private final int max_eval;
-    private final int limit;
-    private final int food_number;
-    private final double lower_bound;
-    private final double upper_bound;
+    final int dimension;
+    final int max_eval;
+    final int limit;
+    final int food_number;
+    final double lower_bound;
+    final double upper_bound;
     public double[][] solution;
-    private final double[] fitness;
+    final double[] fitness;
     public double[] func_res;
     public double[] prob;
-    private final int[] trial;
+    final double[] trial;
     private double best_solve;
-    private int eval_count = 0;
+    int eval_count = 0;
     private int cycle_count = 0;
-    private Random random;
+    Random random;
     private int seed;
     private boolean randomSeed = true;
     String func_name;
+
+    double[] globalBest;
 
 
 
@@ -28,8 +30,7 @@ public class ABC {
                int MAXIMUM_EVALUATION,
                int LIMIT,
                double LOWER_BOUND,
-               double UPPER_BOUND,
-               String FUNCTION_NAME) {
+               double UPPER_BOUND, String FUNCTION_NAME) {
         dimension = DIMENSION;
         max_eval = MAXIMUM_EVALUATION;
         limit = LIMIT;
@@ -40,11 +41,11 @@ public class ABC {
         fitness = new double[food_number];
         func_res = new double[food_number];
         prob = new double[food_number];
-        trial = new int[food_number];
+        trial = new double[food_number];
         func_name = FUNCTION_NAME;
     }
 
-    private double function_calculator(double[] sol) {
+    double function_calculator(double[] sol) {
         double res = 0.0;
         if(func_name.equals("sphere")) {
             for (double v : sol) {
@@ -97,7 +98,7 @@ public class ABC {
             }
             return res + (sol[0] - 1) * (sol[0] - 1);
         }
-        return 99.9;
+        return 9999.9999;
     }
 
     public void setRandomSeed(int seed) {
@@ -105,12 +106,12 @@ public class ABC {
         this.seed = seed;
     }
 
-    private double fitness_calculator(double func) {
+    double fitness_calculator(double func) {
         eval_count++;
         return (func < 0) ? 1.0 + Math.abs(func) :1.0/(1.0+func);
     }
 
-    private void init(int index) {
+    void init(int index) {
         for(int i = 0; i < dimension; i++) {
             solution[index][i] = lower_bound + random.nextDouble()  * (upper_bound - lower_bound);
         }
@@ -120,8 +121,9 @@ public class ABC {
     }
 
     public void initilaze() {
-        if(randomSeed)
+        if(randomSeed){
             random = new Random();
+        }
         else
             random = new Random(seed);
         int i = 0;
@@ -129,13 +131,16 @@ public class ABC {
             init(i);
             i++;
         }
+        globalBest = new double[dimension];
         best_solve = func_res[0];
+        System.arraycopy(solution[0], 0, globalBest, 0, dimension);
     }
 
     public void memorize_best_source() {
         for(int i = 0; i < food_number; i++) {
             if(func_res[i] < best_solve) {
                 best_solve = func_res[i];
+                System.arraycopy(solution[i], 0, globalBest, 0, dimension);
             }
         }
     }
@@ -144,7 +149,7 @@ public class ABC {
         return eval_count < max_eval;
     }
 
-    private void generate_new_solution(int index) {
+    void generate_new_solution(int index) {
         int param2change = (int) (random.nextDouble() * dimension);
         int rand_k = (int) (random.nextDouble() * food_number);
 
@@ -209,15 +214,14 @@ public class ABC {
 
     public void send_scout_bees() {
         int maxIndex = 0;
-        int maxTrial = 0;
+        double maxTrial = 0;
         for(int i = 0; i < food_number; i++) {
             if(trial[i] > maxTrial) {
                 maxIndex = i;
                 maxTrial = trial[i];
             }
         }
-        double h = (fitness[maxIndex] - StatisticFunctions.min(fitness)) / (StatisticFunctions.max(fitness) - StatisticFunctions.min(fitness));
-        if(trial[maxIndex] >= limit / prob[maxIndex])
+        if(trial[maxIndex] >= limit)
             init(maxIndex);
     }
 
@@ -232,7 +236,4 @@ public class ABC {
     public int getCycle_count() {
         return cycle_count;
     }
-
 }
-
-
